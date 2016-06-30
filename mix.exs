@@ -36,7 +36,8 @@ defmodule BakeOff.Mixfile do
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
      {:redix, ">= 0.0.0"},
-     {:httpoison, "~> 0.9.0"}]
+     {:httpoison, "~> 0.9.0"},
+     {:poison, "~> 2.0"}]
   end
 
   defp aliases do
