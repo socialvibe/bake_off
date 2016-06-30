@@ -17,10 +17,16 @@ config :bake_off, BakeOff.Endpoint,
   pubsub: [name: BakeOff.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
+config :bake_off, :s3,
+  bucket: "bakeoff-test-bucket",
+  file: "pies.json"
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
+
+import_config "prod.secret.exs"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
