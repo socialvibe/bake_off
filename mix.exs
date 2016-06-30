@@ -19,7 +19,7 @@ defmodule BakeOff.Mixfile do
   def application do
     [mod: {BakeOff, []},
      applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext, :redix,
-                    :ex_aws, :httpoison]]
+                    :httpoison]]
   end
 
   # Specifies which paths to compile per environment.
@@ -36,7 +36,6 @@ defmodule BakeOff.Mixfile do
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
      {:redix, ">= 0.0.0"},
-     {:ex_aws, "~> 0.5.0"},
      {:httpoison, "~> 0.9.0"}]
   end
 
