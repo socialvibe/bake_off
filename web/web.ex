@@ -18,21 +18,12 @@ defmodule BakeOff.Web do
 
   def model do
     quote do
-      use Ecto.Schema
-
-      import Ecto
-      import Ecto.Changeset
-      import Ecto.Query
     end
   end
 
   def controller do
     quote do
       use Phoenix.Controller
-
-      alias BakeOff.Repo
-      import Ecto
-      import Ecto.Query
 
       import BakeOff.Router.Helpers
       import BakeOff.Gettext
@@ -65,9 +56,6 @@ defmodule BakeOff.Web do
     quote do
       use Phoenix.Channel
 
-      alias BakeOff.Repo
-      import Ecto
-      import Ecto.Query
       import BakeOff.Gettext
     end
   end
