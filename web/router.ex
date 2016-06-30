@@ -17,6 +17,8 @@ defmodule BakeOff.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
+    get "/pies", PieController, :index
+    get "/pies/:pie_id", PieController, :show
   end
 
   # Other scopes may use custom stacks.
