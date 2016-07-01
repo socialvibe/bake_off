@@ -25,6 +25,7 @@ defmodule BakeOff.PieController do
   end
 
   def purchases(conn, params) do
+    validate_required_parameters(conn, ["username", "amount", "slices"])
     case Pie.purchase(params) do
       { :ok, response } ->
         conn |> send_resp(response, "")
@@ -34,7 +35,7 @@ defmodule BakeOff.PieController do
   end
 
   def recommend(conn, params) do
-    # TODO: better validation
+    validate_required_parameters(conn, ["username"])
     labels = String.split(to_string(params["labels"]), ",")
     username = params["username"]
     budget = params["budget"]
@@ -79,5 +80,16 @@ defmodule BakeOff.PieController do
       remaining_slices: Pie.remaining_slices(pie),
       purchases: Pie.buyers_map(pie)
     }
+  end
+
+  defp validate_required_parameters(conn, required_list) do
+    try do
+      Enum.each(required_list, fn(required_param) -> scrub_params(conn, required_param) end)
+    rescue
+      Phoenix.MissingParamError ->
+        conn
+        |> put_status(:bad_request)
+        |> json(%{error: "Missing required parameters"})
+    end
   end
 end
