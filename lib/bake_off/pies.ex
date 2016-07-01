@@ -20,7 +20,10 @@ defmodule BakeOff.Pies do
   # GenServer callbacks
   def init(_) do
     { :ok, %{ body: pie_json } } = HTTPoison.get(@s3)
-    { :ok, Map.get(Poison.Parser.parse!(pie_json), "pies") }
+    pies = Poison.Parser.parse!(pie_json)
+    |> Map.get("pies")
+    |> Enum.sort(&(&1["price_per_slice"] < &2["price_per_slice"]))
+    { :ok, pies }
   end
 
   def handle_call(:get, _from, current_state) do

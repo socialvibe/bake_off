@@ -32,9 +32,9 @@ defmodule BakeOff.PieController do
     username = params["username"]
     budget = params["budget"]
 
-    candidates = Pies.get_all # TODO: sorted by price per pie
-      |> Enum.filter(fn(pie) -> Pie.has_labels?(pie, labels) end)
-      |> Enum.reject(fn(pie) -> Pie.unavailable?(pie, username) end)
+    candidates = BakeOff.Pies.get_all
+      |> Enum.filter(fn(pie) -> BakeOff.Pie.has_labels?(pie, labels) end)
+      |> Enum.reject(fn(pie) -> BakeOff.Pie.unavailable?(pie, username) end)
 
     chosen = case budget do
       "cheap" -> List.first(candidates)
