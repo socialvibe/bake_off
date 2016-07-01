@@ -10,7 +10,7 @@ defmodule BakeOff.PieView do
       Enum.reduce(
         BakeOff.Purchases.get(pie["id"]),
         0,
-        fn({_k,v}, acc) -> String.to_integer(v) + acc  end
+        fn({_k,v}, acc) -> v + acc  end
       )
   end
 
