@@ -7,9 +7,9 @@
   <li>
     <%= "#{@pie["name"]} lovers" %>
     <ul>
-      <%= for {buyer, slices} <- buyers_map(@pie) do %>
+      <%= for buyer <- buyers_map(@pie) do %>
         <li>
-          <%= "#{buyer}: #{slices} slices" %>
+          <%= "#{buyer[:username]}: #{buyer[:slices]} slices" %>
         </li>
       <% end %>
     </ul>
