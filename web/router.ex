@@ -18,8 +18,8 @@ defmodule BakeOff.Router do
     #temporarily all GETs for testing
     get "/pies", PieController, :index
     get "/pies/recommend", PieController, :recommend
-    get "/pies/:pie_id", PieController, :show
-    post "/pies/:pie_id/purchases", PieController, :purchases
+    get "/pie/:pie_id", PieController, :show
+    post "/pie/:pie_id/purchases", PieController, :purchases
     get "/*path", PageController, :not_found
   end
 
