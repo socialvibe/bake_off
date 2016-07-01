@@ -2,7 +2,7 @@ defmodule BakeOff.PieController do
   use BakeOff.Web, :controller
 
   def index(conn, _params) do
-    render conn, "index.html"
+    render conn, "index.html", pies: BakeOff.Pies.get_all
   end
 
   def show(conn, %{ "pie_id" => pie_id }) do
