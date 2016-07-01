@@ -32,7 +32,7 @@ defmodule BakeOff.PieController do
     username = params["username"]
     budget = params["budget"]
 
-    candidates = BakeOff.Pies.get_all
+    candidates = Pies.get_all
       |> Enum.filter(fn(pie) -> BakeOff.Pie.has_labels?(pie, labels) end)
       |> Enum.reject(fn(pie) -> BakeOff.Pie.unavailable?(pie, username) end)
 
