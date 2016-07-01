@@ -9,9 +9,9 @@ defmodule BakeOff.PieController do
     # this should go in a model module but I'm not sure how to create
     # one properly without any db connections since everything I see
     # is based off of Ectp
-    { pie_id_int, _ } = Integer.parse(pie_id)
-    pie = BakeOff.Server.get(pie_id_int)
-    # do redis stuff
+    pie = String.to_integer(pie_id)
+    |> BakeOff.Pies.get
+
     render(conn, "show.html", pie: pie)
   end
 

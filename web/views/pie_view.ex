@@ -7,5 +7,17 @@ defmodule BakeOff.PieView do
 
   # TODO: subtract slices already eaten
   def get_slices(pie), do: pie["slices"]
-end
 
+  def remaining_slices(pie) do
+    pie["slices"] -
+      Enum.reduce(
+        BakeOff.Purchases.get(pie["id"]),
+        0,
+        fn({_k,v}, acc) -> String.to_integer(v) + acc  end
+      )
+  end
+
+  def buyers_map(pie) do
+    BakeOff.Purchases.get(pie["id"])
+  end
+end

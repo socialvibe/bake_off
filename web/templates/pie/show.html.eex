@@ -1,1 +1,17 @@
 <h1><%= @pie["name"] %></h1>
+
+<img src="<%= @pie["image_url"] %>" height="400" width="500">
+<ul>
+  <li>Price per Slice: $<%= @pie["price_per_slice"] %></li>
+  <li>Remaining Slices: <%= remaining_slices(@pie) %></li>
+  <li>
+    <%= "#{@pie["name"]} lovers" %>
+    <ul>
+      <%= for {buyer, slices} <- buyers_map(@pie) do %>
+        <li>
+          <%= "#{buyer}: #{slices} slices" %>
+        </li>
+      <% end %>
+    </ul>
+  </li>
+</ul>
