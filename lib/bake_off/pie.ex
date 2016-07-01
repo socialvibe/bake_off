@@ -48,13 +48,14 @@ defmodule BakeOff.Pie do
     buyer = params["username"]
     slices_to_buy = String.to_integer(params["slices"])
     bought_slices = Purchases.get(pie["id"])[buyer]
+    {amount, _} = Float.parse(params["amount"])
 
     cond do
       BakeOff.Pie.remaining_slices(pie) - slices_to_buy < 0 ->
         { :error, :gone, "No more of that pie.  Try something else." }
       bought_slices && bought_slices >= 3 ->
         { :error, :too_many_requests, "Gluttony is discouraged." }
-      String.to_float(params["amount"]) != Float.round(pie["price_per_slice"] * slices_to_buy, 2) ->
+      amount != Float.round(pie["price_per_slice"] * slices_to_buy, 2) ->
         { :error, :payment_required, "You did math wrong." }
       true ->
         Purchases.store(pie["id"], buyer, slices_to_buy)
