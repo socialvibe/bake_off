@@ -15,7 +15,7 @@ defmodule BakeOff.Purchases do
     #   => %{"chris" => "3", "david" => "1"} # Enum.into
     {:ok, flat_purchases} = BakeOff.Redix.command(~w(HGETALL #{pie_id}))
     Enum.chunk(flat_purchases, 2)
-      |> Enum.map(fn([x,y]) -> {x,y} end)
+      |> Enum.map(fn([user, slices]) -> {user, String.to_integer(slices)} end)
       |> Enum.into(%{})
   end
 end

@@ -25,10 +25,23 @@ defmodule BakeOff.PieController do
   end
 
   def recommend(conn, params) do
+    # TODO: better validation
+    labels = String.split(to_string(params["labels"]), ",")
+    username = params["username"]
+    budget = params["budget"]
+
+    candidates = BakeOff.Pies.get_all # TODO: sorted by price per pie
+      |> Enum.filter(fn(pie) -> BakeOff.Pie.has_labels?(pie, labels) end)
+      |> Enum.reject(fn(pie) -> BakeOff.Pie.unavailable?(pie, username) end)
+
+    chosen = case budget do
+      "cheap" -> List.first(candidates)
+      "premium" -> List.last(candidates)
+      _ -> List.first # TODO:  actually raise an error
+    end
+
     json conn, %{
-      username: params["username"],
-      budget: params["budget"],
-      labels: params["labels"]
+      pie_url: chosen # TODO: route helper for generating /pies/42
     }
   end
 
