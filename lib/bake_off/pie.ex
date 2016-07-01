@@ -17,6 +17,20 @@ defmodule BakeOff.Pie do
     empty? || user_stuffed?
   end
 
+  def remaining_slices(pie) do
+    pie["slices"] -
+      Enum.reduce(
+        BakeOff.Purchases.get(pie["id"]),
+        0,
+        fn({_k,v}, acc) -> v + acc  end
+      )
+  end
+
+  def buyers_map(pie) do
+    BakeOff.Purchases.get(pie["id"])
+    |> Enum.map(fn({ username, slices }) -> %{ username: username, slices: slices } end)
+  end
+
   def purchase(params) do
     pie_response = String.to_integer(params["pie_id"])
     |> Pies.get

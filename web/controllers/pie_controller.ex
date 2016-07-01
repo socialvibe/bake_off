@@ -17,12 +17,9 @@ defmodule BakeOff.PieController do
         |> Pies.get
 
         case { format, pie_response } do
-          { :html, { :ok, pie } } ->
-            render conn, "show.html", pie: pie
-          { :json, { :ok, pie } } ->
-            json conn, pie
-          { _, { :error } } ->
-            render_404(conn)
+          { :html, { :ok, pie } } -> render conn, "show.html", pie: pie
+          { :json, { :ok, pie } } -> json conn, pie_json(pie)
+          { _, { :error } } -> render_404(conn)
         end
     end
   end
@@ -72,5 +69,15 @@ defmodule BakeOff.PieController do
       [_, id | _] ->
         { :html, id }
     end
+  end
+
+  defp pie_json(pie) do
+    %{
+      name: pie["name"],
+      image_url: pie["image_url"],
+      price_per_slice: pie["price_per_slice"],
+      remaining_slices: Pie.remaining_slices(pie),
+      purchases: Pie.buyers_map(pie)
+    }
   end
 end
