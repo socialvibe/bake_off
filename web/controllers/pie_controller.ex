@@ -39,13 +39,11 @@ defmodule BakeOff.PieController do
     end
   end
 
-  def purchase(conn, params) do
-    json conn, %{
-      pie_id: params["pie_id"],
-      username: params["username"],
-      amount: params["amount"],
-      slices: params["slices"]
-    }
+  def purchases(conn, params) do
+    case Pie.purchase(params) do
+      { :ok, response } -> conn |> send_resp(response, "")
+      { :error, response } -> conn |> send_resp(response, "")
+    end
   end
 
   def recommend(conn, params) do
