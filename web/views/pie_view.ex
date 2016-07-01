@@ -5,9 +5,6 @@ defmodule BakeOff.PieView do
 
   def get_price(pie), do: "$#{pie["price_per_slice"]}"
 
-  # TODO: subtract slices already eaten
-  def get_slices(pie), do: pie["slices"]
-
   def remaining_slices(pie) do
     pie["slices"] -
       Enum.reduce(
