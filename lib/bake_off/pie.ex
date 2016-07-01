@@ -2,7 +2,7 @@ defmodule BakeOff.Pie do
   alias BakeOff.Purchases
   alias BakeOff.Pies
 
-  def has_labels?(pie, []), do: true
+  def has_labels?(_pie, []), do: true
   def has_labels?(pie, labels) do
     Enum.all?(labels, fn(label) -> Enum.member?(pie["labels"], label) end)
   end
