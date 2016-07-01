@@ -38,7 +38,7 @@ defmodule BakeOff.Pie do
 
     case pie_response do
       { :error } ->
-        { :error, :not_found }
+        { :error, :not_found, "This pie does not exist!" }
       { :ok, pie } ->
         attempt_purchase(pie, params)
     end
