@@ -6,21 +6,13 @@ defmodule BakeOff.PieController do
   end
 
   def show(conn, %{ "pie_id" => pie_id }) do
-    # there's almost definitely a better way to do this.
-    # unfortunately, pattern matching on string concatenation
-    # doesn't allow for the unkown bit to be at the beginning
-    # e.g. %{ "pie_id" => pie_id <> ".json" } won't work,
-    # and you can't use ends_with?/2 in a guard, e.g.
-    # def show(conn %{ "pie_id" => pie_id }) when ends_with?(pie_id, ".json") do
-    # anyway, this works for responding to pie_id and pie_id.json
-    # for now.
-    match = Regex.run(~r/(.+)\.json/, pie_id)
-    if is_nil(match) do
-      render conn, "show.html", pie_id: pie_id
-    else
-      [_|[id]] = match
-      json conn, as_json(id)
-    end
+    # this should go in a model module but I'm not sure how to create
+    # one properly without any db connections since everything I see
+    # is based off of Ectp
+    { pie_id_int, _ } = Integer.parse(pie_id)
+    pie = BakeOff.Server.get(pie_id_int)
+    # do redis stuff
+    render(conn, "show.html", pie: pie)
   end
 
   def purchase(conn, params) do
