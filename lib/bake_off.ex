@@ -6,6 +6,9 @@ defmodule BakeOff do
   def start(_type, _args) do
     import Supervisor.Spec
 
+    # TODO: maybe we want this under a supervisor?
+    BakeOff.Server.start
+
     # Define workers and child supervisors to be supervised
     children = [
       # Start the endpoint when the application starts

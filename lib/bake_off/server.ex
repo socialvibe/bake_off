@@ -4,16 +4,15 @@ defmodule BakeOff.Server do
   @s3 Application.fetch_env!(:bake_off, :s3)
 
   def start do
-    { :ok, pid } = GenServer.start(__MODULE__, nil)
-    pid
+    GenServer.start(__MODULE__, nil, name: name)
   end
 
-  def get_all(pid) do
-    GenServer.call(pid, :get)
+  def get_all do
+    GenServer.call(name, :get)
   end
 
-  def get(pid, id) do
-    GenServer.call(pid, :get)
+  def get(id) do
+    GenServer.call(name, :get)
     |> Enum.find(fn item -> item["id"] == id end)
   end
 
@@ -25,5 +24,9 @@ defmodule BakeOff.Server do
 
   def handle_call(:get, _from, current_state) do
     { :reply, current_state, current_state }
+  end
+
+  defp name do
+    {:global, :server}
   end
 end
