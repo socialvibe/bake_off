@@ -19,7 +19,9 @@ defmodule BakeOff.PieController do
         case { format, pie_response } do
           { :html, { :ok, pie } } -> render conn, :show, pie: pie
           { :json, { :ok, pie } } -> json conn, pie_json(pie)
-          { _, { :error } } -> render_404(conn)
+          { :html, { :error } } -> render_404(conn)
+          { :json, { :error } } ->
+            conn |> put_status(:not_found) |> json %{error: "not found"}
         end
     end
   end
