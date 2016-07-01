@@ -8,7 +8,7 @@ defmodule BakeOff.Purchases do
   end
 
   def get(pie_id) do
-    # Example pipeline:
+    # Example pipeline (I think the last two steps can be combined):
     #   flat_purchases => ["chris", "3", "david", "1"]
     #   => [["chris", "3"], ["david", "1"]]  # Enum.chunk
     #   => [{"chris", "3"}, {"david", "1"}]  # Enum.map
