@@ -1,5 +1,7 @@
 defmodule BakeOff.PieController do
   use BakeOff.Web, :controller
+  alias BakeOff.Pie
+  alias BakeOff.Pies
 
   def index(conn, _params) do
     render conn, "index.html", pies: BakeOff.Pies.get_all
@@ -30,14 +32,14 @@ defmodule BakeOff.PieController do
     username = params["username"]
     budget = params["budget"]
 
-    candidates = BakeOff.Pies.get_all # TODO: sorted by price per pie
-      |> Enum.filter(fn(pie) -> BakeOff.Pie.has_labels?(pie, labels) end)
-      |> Enum.reject(fn(pie) -> BakeOff.Pie.unavailable?(pie, username) end)
+    candidates = Pies.get_all # TODO: sorted by price per pie
+      |> Enum.filter(fn(pie) -> Pie.has_labels?(pie, labels) end)
+      |> Enum.reject(fn(pie) -> Pie.unavailable?(pie, username) end)
 
     chosen = case budget do
       "cheap" -> List.first(candidates)
       "premium" -> List.last(candidates)
-      _ -> List.first # TODO:  actually raise an error
+      _ -> List.first(candidates) # TODO:  actually raise an error
     end
 
     json conn, %{

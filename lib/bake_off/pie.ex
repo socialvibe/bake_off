@@ -1,10 +1,12 @@
 defmodule BakeOff.Pie do
+  alias BakeOff.Purchases
+
   def has_labels?(pie, labels) do
     Enum.all?(labels, fn(label) -> Enum.member?(pie["labels"], label) end)
   end
 
   def unavailable?(pie, username) do
-    purchases = BakeOff.Purchases.get(pie["id"])
+    purchases = Purchases.get(pie["id"])
     consumed_slices = Map.values(purchases) |> Enum.sum
     consumed_by_user = purchases[username]
 
