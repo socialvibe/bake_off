@@ -9,13 +9,19 @@ defmodule BakeOff do
     # TODO: maybe we want this under a supervisor?
     BakeOff.Server.start
 
+    # Create the redix children list of workers:
+    pool_size = 5
+    redix_workers = for i <- 0..(pool_size - 1) do
+      worker(Redix, [[], [name: :"redix_#{i}"]], id: {Redix, i})
+    end
+
     # Define workers and child supervisors to be supervised
     children = [
       # Start the endpoint when the application starts
       supervisor(BakeOff.Endpoint, []),
       # Start your own worker by calling: BakeOff.Worker.start_link(arg1, arg2, arg3)
       # worker(BakeOff.Worker, [arg1, arg2, arg3]),
-    ]
+    ] ++ redix_workers
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
