@@ -7,7 +7,7 @@ defmodule BakeOff do
     import Supervisor.Spec
 
     # TODO: maybe we want this under a supervisor?
-    BakeOff.Server.start
+    BakeOff.Pies.start
 
     # Create the redix children list of workers:
     pool_size = 5

@@ -1,8 +1,9 @@
-defmodule BakeOff.Server do
+defmodule BakeOff.Pies do
   use GenServer
 
   @s3 Application.fetch_env!(:bake_off, :s3)
 
+  # API
   def start do
     GenServer.start(__MODULE__, nil, name: name)
   end
@@ -27,6 +28,6 @@ defmodule BakeOff.Server do
   end
 
   defp name do
-    {:global, :server}
+    {:global, :pies}
   end
 end
