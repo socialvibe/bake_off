@@ -39,6 +39,8 @@ defmodule BakeOff.Pie do
         { :error, :gone, "No more of that pie.  Try something else." }
       bought_slices && bought_slices >= 3 ->
         { :error, :too_many_requests, "Gluttony is discouraged." }
+      String.to_float(params["amount"]) != (pie["price_per_slice"] * slices_to_buy) ->
+        { :error, :payment_required, "You did math wrong." }
       true ->
         Purchases.store(pie["id"], buyer, slices_to_buy)
         { :ok, :created }
