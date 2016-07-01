@@ -6,9 +6,6 @@ defmodule BakeOff do
   def start(_type, _args) do
     import Supervisor.Spec
 
-    # TODO: maybe we want this under a supervisor?
-    BakeOff.Pies.start
-
     # Create the redix children list of workers:
     pool_size = 5
     redix_workers = for i <- 0..(pool_size - 1) do
@@ -19,6 +16,10 @@ defmodule BakeOff do
     children = [
       # Start the endpoint when the application starts
       supervisor(BakeOff.Endpoint, []),
+
+      # Start and supervise the Pies GenServer
+      worker(BakeOff.Pies, [])
+
       # Start your own worker by calling: BakeOff.Worker.start_link(arg1, arg2, arg3)
       # worker(BakeOff.Worker, [arg1, arg2, arg3]),
     ] ++ redix_workers
