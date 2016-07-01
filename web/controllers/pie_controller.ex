@@ -21,7 +21,7 @@ defmodule BakeOff.PieController do
           { :json, { :ok, pie } } -> json conn, pie_json(pie)
           { :html, { :error } } -> render_404(conn)
           { :json, { :error } } ->
-            conn |> put_status(:not_found) |> json %{error: "not found"}
+            conn |> put_status(:not_found) |> json(%{error: "not found"})
         end
     end
   end
@@ -40,7 +40,7 @@ defmodule BakeOff.PieController do
     validate_required_parameters(conn, ["username"])
     labels = String.split(to_string(params["labels"]), ",")
     username = params["username"]
-    budget = params["budget"]
+    budget = params["budget"] || "cheap"
 
     candidates = Pies.get_all
       |> Enum.filter(fn(pie) -> Pie.has_labels?(pie, labels) end)
@@ -49,12 +49,13 @@ defmodule BakeOff.PieController do
     chosen = case budget do
       "cheap" -> List.first(candidates)
       "premium" -> List.last(candidates)
-      _ -> List.first(candidates) # TODO:  actually raise an error
     end
 
-    json conn, %{
-      pie_url: pie_url(conn, :show, chosen["id"])
-    }
+    if chosen == nil do
+      conn |> put_status(:not_found) |> json(%{ error: "Sorry we don’t have what you’re looking for. Come back early tomorrow before the crowds come from the best pie selection." })
+    else
+      json conn, %{ pie_url: pie_url(conn, :show, chosen["id"]) }
+    end
   end
 
   defp render_404(conn) do
