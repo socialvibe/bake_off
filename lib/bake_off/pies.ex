@@ -13,13 +13,13 @@ defmodule BakeOff.Pies do
   end
 
   def get_all do
-    GenServer.call(name, :get)
+    GenServer.call(name, :get_all)
   end
 
   def get(id) do
     pie = GenServer.call(name, :get)
     |> Enum.find(fn item -> item["id"] == id end)
-    if pie do
+    if pie do # TODO: if/else code smell
       { :ok, pie }
     else
       { :error }
@@ -29,14 +29,18 @@ defmodule BakeOff.Pies do
   # GenServer callbacks
   def init(_) do
     { :ok, %{ body: pie_json } } = HTTPoison.get(@s3)
-    pies = Poison.Parser.parse!(pie_json)
-    |> Map.get("pies")
-    |> Enum.sort(&(&1["price_per_slice"] < &2["price_per_slice"]))
-    { :ok, pies }
+    pies = Poison.Parser.parse!(pie_json) |> Map.get("pies")
+    sorted = pies |> Enum.sort(&(&1["price_per_slice"] < &2["price_per_slice"]))
+
+    { :ok, %{ pie_map: pies, sorted_pie_list: sorted } }
   end
 
-  def handle_call(:get, _from, current_state) do
-    { :reply, current_state, current_state }
+  def handle_call(:get, _from, state) do
+    { :reply, state.pie_map, state }
+  end
+
+  def handle_call(:get_all, _from, state) do
+    { :reply, state.sorted_pie_list, state }
   end
 
   defp name do
