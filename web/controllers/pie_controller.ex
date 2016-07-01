@@ -40,18 +40,18 @@ defmodule BakeOff.PieController do
     budget = params["budget"]
 
     candidates = Pies.get_all
-                  |> Enum.filter(fn(pie) -> BakeOff.Pie.has_labels?(pie, labels) end)
-                  |> Enum.reject(fn(pie) -> BakeOff.Pie.unavailable?(pie, username) end)
+      |> Enum.filter(fn(pie) -> BakeOff.Pie.has_labels?(pie, labels) end)
+      |> Enum.reject(fn(pie) -> BakeOff.Pie.unavailable?(pie, username) end)
 
-      chosen = case budget do
-        "cheap" -> List.first(candidates)
-        "premium" -> List.last(candidates)
-        _ -> List.first(candidates) # TODO:  actually raise an error
-      end
+    chosen = case budget do
+      "cheap" -> List.first(candidates)
+      "premium" -> List.last(candidates)
+      _ -> List.first(candidates) # TODO:  actually raise an error
+    end
 
-      json conn, %{
-        pie_url: chosen # TODO: route helper for generating /pies/42
-      }
+    json conn, %{
+      pie_url: chosen # TODO: route helper for generating /pies/42
+    }
   end
 
   defp render_404(conn) do
