@@ -24,9 +24,6 @@ defmodule BakeOff.PieController do
   end
 
   def show(conn, %{ "pie_id" => pie_id }) do
-    # this should go in a model module but I'm not sure how to create
-    # one properly without any db connections since everything I see
-    # is based off of Ectp
     pie_response = pie_id
     |> String.to_integer # TODO: breaks if not integer
     |> Pies.get
