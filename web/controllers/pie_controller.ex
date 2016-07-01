@@ -11,10 +11,18 @@ defmodule BakeOff.PieController do
     # this should go in a model module but I'm not sure how to create
     # one properly without any db connections since everything I see
     # is based off of Ectp
-    pie = String.to_integer(pie_id)
-    |> BakeOff.Pies.get
+    pie = Path.rootname(pie_id)
+    |> String.to_integer
+    |> Pies.get # TODO: probably need error handling here (or in Pies)
 
-    render(conn, "show.html", pie: pie)
+    case Path.extname(pie_id) do
+      ".json" ->
+        json conn, pie
+      "" ->
+        render conn, "show.html", pie: pie # TODO: add purchases to map first
+      _ ->
+        render conn, "show.html", pie: pie # TODO: 404
+    end
   end
 
   def purchase(conn, params) do
@@ -44,16 +52,6 @@ defmodule BakeOff.PieController do
 
     json conn, %{
       pie_url: chosen # TODO: route helper for generating /pies/42
-    }
-  end
-
-  defp as_json(pie) do
-    %{
-      name: "pie #{pie}",
-      image_url: "http://imgur.com/#{pie}",
-      price_per_slice: "$1",
-      remaining_slices: 10,
-      purchases: [%{ user_name: "nathan", slices: 1 }]
     }
   end
 end
