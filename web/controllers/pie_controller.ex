@@ -41,8 +41,10 @@ defmodule BakeOff.PieController do
 
   def purchases(conn, params) do
     case Pie.purchase(params) do
-      { :ok, response } -> conn |> send_resp(response, "")
-      { :error, response } -> conn |> send_resp(response, "")
+      { :ok, response } ->
+        conn |> send_resp(response, "")
+      { :error, response, message } ->
+        conn |> put_status(response) |> json(%{error: message})
     end
   end
 

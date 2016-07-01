@@ -35,10 +35,10 @@ defmodule BakeOff.Pie do
     bought_slices = Purchases.get(pie["id"])[buyer]
 
     cond do
-      bought_slices >= 3 ->
-        { :error, :too_many_requests }
       pie["slices"] - slices_to_buy < 0 ->
-        { :error, :gone }
+        { :error, :gone, "No more of that pie.  Try something else." }
+      bought_slices && bought_slices >= 3 ->
+        { :error, :too_many_requests, "Gluttony is discouraged." }
       true ->
         Purchases.store(pie["id"], buyer, slices_to_buy)
         { :ok, :created }
