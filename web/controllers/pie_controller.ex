@@ -20,8 +20,7 @@ defmodule BakeOff.PieController do
           { :html, { :ok, pie } } -> render conn, :show, pie: pie
           { :json, { :ok, pie } } -> json conn, pie_json(pie)
           { :html, { :error } } -> render_404(conn)
-          { :json, { :error } } ->
-            conn |> put_status(:not_found) |> json(%{error: "not found"})
+          { :json, { :error } } -> render_404_json(conn)
         end
     end
   end
@@ -29,8 +28,8 @@ defmodule BakeOff.PieController do
   def purchases(conn, params) do
     validate_required_parameters(conn, ["username", "amount", "slices"])
     case Pie.purchase(params) do
-      { :ok, response } ->
-        conn |> send_resp(response, "")
+      { :ok, response } -> conn |> send_resp(response, "")
+      { :error, :not_found } -> render_404_json(conn)
       { :error, response, message } ->
         conn |> put_status(response) |> json(%{error: message})
     end
@@ -52,7 +51,7 @@ defmodule BakeOff.PieController do
     end
 
     if chosen == nil do
-      conn |> put_status(:not_found) |> json(%{ error: "Sorry we don’t have what you’re looking for. Come back early tomorrow before the crowds come from the best pie selection." })
+      render_404_json(conn)
     else
       json conn, %{ pie_url: pie_url(conn, :show, chosen["id"]) }
     end
@@ -62,6 +61,14 @@ defmodule BakeOff.PieController do
     conn
     |> put_status(:not_found)
     |> render(BakeOff.ErrorView, "404.html")
+  end
+
+  defp render_404_json(conn) do
+    error_message = """
+    Sorry we don’t have what you’re looking for.
+    Come back early tomorrow before the crowds come from the best pie selection.
+    """
+    conn |> put_status(:not_found) |> json(%{error: error_message})
   end
 
   defp get_id_and_format(pie_id) do
