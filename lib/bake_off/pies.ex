@@ -13,8 +13,13 @@ defmodule BakeOff.Pies do
   end
 
   def get(id) do
-    GenServer.call(name, :get)
+    pie = GenServer.call(name, :get)
     |> Enum.find(fn item -> item["id"] == id end)
+    if pie do
+      { :ok, pie }
+    else
+      { :error }
+    end
   end
 
   # GenServer callbacks

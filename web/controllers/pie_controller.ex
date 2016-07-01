@@ -11,17 +11,13 @@ defmodule BakeOff.PieController do
     # this should go in a model module but I'm not sure how to create
     # one properly without any db connections since everything I see
     # is based off of Ectp
-    pie = Path.rootname(pie_id)
+    pie_response = Path.rootname(pie_id)
     |> String.to_integer
-    |> Pies.get # TODO: probably need error handling here (or in Pies)
+    |> Pies.get
 
-    case Path.extname(pie_id) do
-      ".json" ->
-        json conn, pie
-      "" ->
-        render conn, "show.html", pie: pie # TODO: add purchases to map first
-      _ ->
-        render conn, "show.html", pie: pie # TODO: 404
+    case pie_response do
+      { :ok, pie } -> render conn, "show.html", pie: pie
+      { :error } -> conn |> put_status(:not_found) |> render(BakeOff.ErrorView, "404.html")
     end
   end
 
