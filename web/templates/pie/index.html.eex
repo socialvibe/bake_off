@@ -1,5 +1,5 @@
 <%= for pie <- @pies do %>
-  <a href=<%= get_href(pie) %>><%= pie["name"] %></a>
+  <a href=<%= pie_path(@conn, :show, pie["id"]) %>><%= pie["name"] %></a>
   <br>
   <img src=<%= pie["image_url"] %> width="100" height="100"> 
   <p>price per slice: <%= get_price(pie) %></p>

@@ -15,4 +15,4 @@
     </ul>
   </li>
 </ul>
-<a href="http://localhost:4000/pies">back</a>
+<a href=<%= pie_path(@conn, :index) %>>back</a>

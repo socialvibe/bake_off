@@ -53,7 +53,7 @@ defmodule BakeOff.PieController do
     end
 
     json conn, %{
-      pie_url: chosen # TODO: route helper for generating /pies/42
+      pie_url: pie_url(conn, :show, chosen["id"])
     }
   end
 
