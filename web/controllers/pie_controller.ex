@@ -7,32 +7,23 @@ defmodule BakeOff.PieController do
     render conn, "index.html", pies: BakeOff.Pies.get_all
   end
 
-  # for the record, elixir style says this route should be
-  # /api/pies/<id> rather than /pies/<id>.json. That is why this
-  # is so gross looking.
-  def show(conn, %{ "format" => "json", "pie_id" => pie_id }) do
-    pie_response = Path.rootname(pie_id)
-    |> String.to_integer
-    |> Pies.get
-
-    case pie_response do
-      { :ok, pie } ->
-        json conn, pie
-      { :error } ->
-        render_404(conn)
-    end
-  end
-
   def show(conn, %{ "pie_id" => pie_id }) do
-    pie_response = pie_id
-    |> String.to_integer # TODO: breaks if not integer
-    |> Pies.get
-
-    case pie_response do
-      { :ok, pie } ->
-        render conn, :show, pie: pie # works for /api/pies/<id> too!
+    case get_id_and_format(pie_id) do
       { :error } ->
         render_404(conn)
+      { format, id } ->
+        pie_response = id
+        |> String.to_integer
+        |> Pies.get
+
+        case { format, pie_response } do
+          { :html, { :ok, pie } } ->
+            render conn, "show.html", pie: pie
+          { :json, { :ok, pie } } ->
+            json conn, pie
+          { _, { :error } } ->
+            render_404(conn)
+        end
     end
   end
 
@@ -52,23 +43,34 @@ defmodule BakeOff.PieController do
     budget = params["budget"]
 
     candidates = Pies.get_all
-      |> Enum.filter(fn(pie) -> BakeOff.Pie.has_labels?(pie, labels) end)
-      |> Enum.reject(fn(pie) -> BakeOff.Pie.unavailable?(pie, username) end)
+                  |> Enum.filter(fn(pie) -> BakeOff.Pie.has_labels?(pie, labels) end)
+                  |> Enum.reject(fn(pie) -> BakeOff.Pie.unavailable?(pie, username) end)
 
-    chosen = case budget do
-      "cheap" -> List.first(candidates)
-      "premium" -> List.last(candidates)
-      _ -> List.first(candidates) # TODO:  actually raise an error
-    end
+      chosen = case budget do
+        "cheap" -> List.first(candidates)
+        "premium" -> List.last(candidates)
+        _ -> List.first(candidates) # TODO:  actually raise an error
+      end
 
-    json conn, %{
-      pie_url: chosen # TODO: route helper for generating /pies/42
-    }
+      json conn, %{
+        pie_url: chosen # TODO: route helper for generating /pies/42
+      }
   end
 
   defp render_404(conn) do
     conn
     |> put_status(:not_found)
     |> render(BakeOff.ErrorView, "404.html")
+  end
+
+  defp get_id_and_format(pie_id) do
+    case Regex.run(~r/\A([0-9]+)(\.json)?\z/, pie_id) do
+      nil ->
+        { :error }
+      [_, id, ".json" | _ ] ->
+        { :json, id }
+      [_, id | _] ->
+        { :html, id }
+    end
   end
 end
