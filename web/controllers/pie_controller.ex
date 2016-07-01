@@ -7,17 +7,35 @@ defmodule BakeOff.PieController do
     render conn, "index.html", pies: BakeOff.Pies.get_all
   end
 
-  def show(conn, %{ "pie_id" => pie_id }) do
-    # this should go in a model module but I'm not sure how to create
-    # one properly without any db connections since everything I see
-    # is based off of Ectp
+  # for the record, elixir style says this route should be
+  # /api/pies/<id> rather than /pies/<id>.json. That is why this
+  # is so gross looking.
+  def show(conn, %{ "format" => "json", "pie_id" => pie_id }) do
     pie_response = Path.rootname(pie_id)
     |> String.to_integer
     |> Pies.get
 
     case pie_response do
-      { :ok, pie } -> render conn, "show.html", pie: pie
-      { :error } -> conn |> put_status(:not_found) |> render(BakeOff.ErrorView, "404.html")
+      { :ok, pie } ->
+        json conn, pie
+      { :error } ->
+        render_404(conn)
+    end
+  end
+
+  def show(conn, %{ "pie_id" => pie_id }) do
+    # this should go in a model module but I'm not sure how to create
+    # one properly without any db connections since everything I see
+    # is based off of Ectp
+    pie_response = pie_id
+    |> String.to_integer # TODO: breaks if not integer
+    |> Pies.get
+
+    case pie_response do
+      { :ok, pie } ->
+        render conn, :show, pie: pie # works for /api/pies/<id> too!
+      { :error } ->
+        render_404(conn)
     end
   end
 
@@ -49,5 +67,11 @@ defmodule BakeOff.PieController do
     json conn, %{
       pie_url: chosen # TODO: route helper for generating /pies/42
     }
+  end
+
+  defp render_404(conn) do
+    conn
+    |> put_status(:not_found)
+    |> render(BakeOff.ErrorView, "404.html")
   end
 end

@@ -17,4 +17,8 @@ defmodule BakeOff.PieView do
   def buyers_map(pie) do
     BakeOff.Purchases.get(pie["id"])
   end
+
+  def render("show.json", params) do
+    params.pie
+  end
 end

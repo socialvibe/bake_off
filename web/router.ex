@@ -2,6 +2,7 @@ defmodule BakeOff.Router do
   use BakeOff.Web, :router
 
   pipeline :browser do
+    plug TrailingFormatPlug
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_flash
@@ -24,8 +25,10 @@ defmodule BakeOff.Router do
     get "/pies/:pie_id/purchase", PieController, :purchase
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", BakeOff do
-  #   pipe_through :api
-  # end
+  #Other scopes may use custom stacks.
+  scope "/api", BakeOff do
+    pipe_through :api
+
+    get "/pies/:pie_id", PieController, :show
+  end
 end
