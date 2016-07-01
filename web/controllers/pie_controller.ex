@@ -17,7 +17,7 @@ defmodule BakeOff.PieController do
         |> Pies.get
 
         case { format, pie_response } do
-          { :html, { :ok, pie } } -> render conn, "show.html", pie: pie
+          { :html, { :ok, pie } } -> render conn, :show, pie: pie
           { :json, { :ok, pie } } -> json conn, pie_json(pie)
           { _, { :error } } -> render_404(conn)
         end
