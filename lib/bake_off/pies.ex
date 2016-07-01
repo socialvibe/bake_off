@@ -18,7 +18,7 @@ defmodule BakeOff.Pies do
 
   def get(id) do
     pie = GenServer.call(name, :get)
-    |> Enum.find(fn item -> item["id"] == id end)
+      |> Map.get(id)
     if pie do # TODO: if/else code smell
       { :ok, pie }
     else
