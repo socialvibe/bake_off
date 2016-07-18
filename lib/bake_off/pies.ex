@@ -4,8 +4,8 @@ defmodule BakeOff.Pies do
   @s3 Application.fetch_env!(:bake_off, :s3)
 
   # API
-  def start_link(opts \\ []) do
-    {:ok, pid} = GenServer.start_link(__MODULE__, nil, name: name)
+  def start_link do
+    {:ok, _pid} = GenServer.start_link(__MODULE__, nil, name: name)
   end
 
   def start do
