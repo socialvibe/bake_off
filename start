@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# initial setup
+mix deps.get --only prod
+MIX_ENV=prod mix compile
+
+# compile assets. Make sure you've installed brunch first with
+# `npm install -g brunch`
+brunch build --production
+MIX_ENV=prod mix phoenix.digest
+
+# run the server
+PORT=31415 MIX_ENV=prod mix phoenix.server
