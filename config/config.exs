@@ -18,7 +18,7 @@ config :bake_off, BakeOff.Endpoint,
            adapter: Phoenix.PubSub.PG2]
 
 config :bake_off,
-  s3: "http://stash.truex.com/tech/bakeoff/pies.json"
+  s3: "http://stash.truex.com/tech/bakeoff/big_pies.json"
 
 # Configures Elixir's Logger
 config :logger, :console,
