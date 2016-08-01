@@ -42,12 +42,12 @@ defmodule BakeOff.PieController do
     budget = params["budget"] || "cheap"
 
     candidates = Pies.get_all
-      |> Enum.filter(fn(pie) -> Pie.has_labels?(pie, labels) end)
-      |> Enum.reject(fn(pie) -> Pie.unavailable?(pie, username) end)
+      |> Stream.filter(fn(pie) -> Pie.has_labels?(pie, labels) end)
+      |> Stream.reject(fn(pie) -> Pie.unavailable?(pie, username) end)
 
     chosen = case budget do
-      "cheap" -> List.first(candidates)
-      "premium" -> List.last(candidates)
+      "cheap" -> Enum.at(candidates, 0)
+      "premium" -> Enum.at(candidates, -1)
     end
 
     if chosen == nil do

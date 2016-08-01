@@ -7,7 +7,7 @@ defmodule BakeOff do
     import Supervisor.Spec
 
     # Create the redix children list of workers:
-    pool_size = 5
+    pool_size = 50
     redix_workers = for i <- 0..(pool_size - 1) do
       worker(Redix, [[], [name: :"redix_#{i}"]], id: {Redix, i})
     end
