@@ -3,6 +3,23 @@ defmodule BakeOff.PieController do
   alias BakeOff.Pie
   alias BakeOff.Pies
 
+  @pies [%{"id" => 1,
+   "image_url" => "http://stash.truex.com/tech/bakeoff/apple_pie.jpg",
+   "labels" => ["vegetarian", "vegan", "sweet"], "name" => "Apple Pie",
+   "price_per_slice" => 1.5, "slices" => 10},
+ %{"id" => 2,
+   "image_url" => "http://stash.truex.com/tech/bakeoff/pecan_pie.jpg",
+   "labels" => ["vegetarian", "vegan", "sweet"], "name" => "Pecan Pie",
+   "price_per_slice" => 2.25, "slices" => 14},
+ %{"id" => 3,
+   "image_url" => "http://stash.truex.com/tech/bakeoff/shepherds_pie.jpg",
+   "labels" => ["gluten_free", "savory"], "name" => "Shepherd's Pie",
+   "price_per_slice" => 8.95, "slices" => 8}]
+
+  @sorted  @pies |> Enum.sort(&(&1["price_per_slice"] < &2["price_per_slice"]))
+
+  @indexed  @pies |> Enum.reduce(%{}, fn(pie, map) -> Map.put(map, pie["id"], pie) end)
+
   def index(conn, _params) do
     render conn, "index.html", pies: BakeOff.Pies.get_all
   end
@@ -41,7 +58,7 @@ defmodule BakeOff.PieController do
     username = params["username"]
     budget = params["budget"] || "cheap"
 
-    candidates = Pies.get_all
+    candidates = @sorted
       |> Stream.filter(fn(pie) -> Pie.has_labels?(pie, labels) end)
       |> Stream.reject(fn(pie) -> Pie.unavailable?(pie, username) end)
 
