@@ -16,6 +16,13 @@ defmodule BakeOff.Pies do
     GenServer.call(name, :get_all)
   end
 
+  def get_all2 do
+    case :ets.lookup(:pies_table, "sorted") do
+      [{"sorted", sorted_pie_list}] -> sorted_pie_list
+      [] -> :error
+    end
+  end
+
   def get(id) do
     pie = GenServer.call(name, :get)
       |> Map.get(id)
@@ -36,7 +43,10 @@ defmodule BakeOff.Pies do
     indexed = pies
       |> Enum.reduce(%{}, fn(pie, map) -> Map.put(map, pie["id"], pie) end)
 
-    { :ok, %{ pie_map: indexed, sorted_pie_list: sorted } }
+    pies_table = :ets.new(:pies_table, [:set, :protected, :named_table, read_concurrency: true])
+    :ets.insert(pies_table, {"sorted", sorted})
+
+    { :ok, %{ pie_map: indexed, sorted_pie_list: sorted, pies_ets: pies_table } }
   end
 
   def handle_call(:get, _from, state) do

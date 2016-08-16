@@ -58,7 +58,7 @@ defmodule BakeOff.PieController do
     username = params["username"]
     budget = params["budget"] || "cheap"
 
-    candidates = @sorted
+    candidates = Pies.get_all2
       |> Stream.filter(fn(pie) -> Pie.has_labels?(pie, labels) end)
       |> Stream.reject(fn(pie) -> Pie.unavailable?(pie, username) end)
 
