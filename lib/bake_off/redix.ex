@@ -4,6 +4,6 @@ defmodule BakeOff.Redix do
   end
 
   defp random_index() do
-    rem(System.unique_integer([:positive]), 5) # second arg is pool size
+    rem(System.unique_integer([:positive]), 50) # second arg is pool size
   end
 end
