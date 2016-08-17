@@ -13,10 +13,6 @@ defmodule BakeOff.Pies do
   end
 
   def get_all do
-    GenServer.call(name, :get_all)
-  end
-
-  def get_all2 do
     case :ets.lookup(:pies_table, "sorted") do
       [{"sorted", sorted_pie_list}] -> sorted_pie_list
       [] -> :error
@@ -24,12 +20,9 @@ defmodule BakeOff.Pies do
   end
 
   def get(id) do
-    pie = GenServer.call(name, :get)
-      |> Map.get(id)
-    if pie do # TODO: if/else code smell
-      { :ok, pie }
-    else
-      { :error }
+    case :ets.lookup(:pies_table, "indexed") do
+      [] -> {:error}
+      [{"indexed", pie_map}] -> get_pie_by_id(pie_map, id)
     end
   end
 
@@ -45,19 +38,21 @@ defmodule BakeOff.Pies do
 
     pies_table = :ets.new(:pies_table, [:set, :protected, :named_table, read_concurrency: true])
     :ets.insert(pies_table, {"sorted", sorted})
+    :ets.insert(pies_table, {"indexed", indexed})
 
     { :ok, %{ pie_map: indexed, sorted_pie_list: sorted, pies_ets: pies_table } }
   end
 
-  def handle_call(:get, _from, state) do
-    { :reply, state.pie_map, state }
-  end
-
-  def handle_call(:get_all, _from, state) do
-    { :reply, state.sorted_pie_list, state }
-  end
-
   defp name do
     BakeOff.Pies
+  end
+
+  defp get_pie_by_id(pie_map, id) do
+    pie = Map.get(pie_map, id)
+    if pie do # TODO: if/else code smell
+      { :ok, pie }
+    else
+      { :error }
+    end
   end
 end
