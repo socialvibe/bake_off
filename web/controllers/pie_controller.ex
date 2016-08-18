@@ -8,21 +8,8 @@ defmodule BakeOff.PieController do
   end
 
   def show(conn, %{ "pie_id" => pie_id }) do
-    case get_id_and_format(pie_id) do
-      { :error } ->
-        render_404(conn)
-      { format, id } ->
-        pie_response = id
-        |> String.to_integer
-        |> Pies.get
-
-        case { format, pie_response } do
-          { :html, { :ok, pie } } -> render conn, :show, pie: pie
-          { :json, { :ok, pie } } -> json conn, pie_json(pie)
-          { :html, { :error } } -> render_404(conn)
-          { :json, { :error } } -> render_404_json(conn)
-        end
-    end
+    get_id_and_format(pie_id)
+    |> render_response(conn)
   end
 
   def purchases(conn, params) do
@@ -80,6 +67,31 @@ defmodule BakeOff.PieController do
       [_, id | _] ->
         { :html, id }
     end
+  end
+
+  defp render_response({ :error }, conn) do
+    render_404(conn)
+  end
+
+  defp render_response({ format, id }, conn) do
+    pie_response = id |> String.to_integer |> Pies.get
+    render_pie(format, pie_response, conn)
+  end
+
+  defp render_pie(:html, { :ok, pie }, conn) do
+    render conn, :show, pie: pie
+  end
+
+  defp render_pie(:html, { :error }, conn) do
+    render_404(conn)
+  end
+
+  defp render_pie(:json, { :ok, pie }, conn) do
+    json conn, pie_json(pie)
+  end
+
+  defp render_pie(:json, { :error }, conn) do
+    conn |> put_status(:not_found) |> json(%{ error: "not found" })
   end
 
   defp pie_json(pie) do
