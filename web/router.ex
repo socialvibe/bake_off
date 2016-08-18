@@ -15,19 +15,18 @@ defmodule BakeOff.Router do
   scope "/", BakeOff do
     pipe_through :browser # Use the default browser stack
 
+    #temporarily all GETs for testing
     get "/pies", PieController, :index
-    get "/pies/recommend", PieController, :recommend
     get "/pie/:pie_id", PieController, :show
     post "/pie/:pie_id/purchases", PieController, :purchases
 
-    get "/hello_world", PageController, :hello_world
-    get "/*path", PageController, :not_found
   end
 
   #Other scopes may use custom stacks.
   scope "/api", BakeOff do
     pipe_through :api
 
+    get "/pies/recommend", PieController, :recommend
     get "/pies/:pie_id", PieController, :show
   end
 end
