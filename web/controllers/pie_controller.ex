@@ -4,7 +4,7 @@ defmodule BakeOff.PieController do
   alias BakeOff.Pies
 
   def index(conn, _params) do
-    render conn, "index.html", pies: BakeOff.Pies.get_all
+    render conn, "index.html", pies: Pies.get_all
   end
 
   def show(conn, %{ "pie_id" => pie_id }) do
