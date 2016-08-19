@@ -1,5 +1,7 @@
 defmodule BakeOff do
   use Application
+    alias BakeOff.Pies
+
 
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
   # for more information on OTP Applications
@@ -12,13 +14,23 @@ defmodule BakeOff do
       worker(Redix, [[], [name: :"redix_#{i}"]], id: {Redix, i})
     end
 
+    poolboy_opts = [
+      name: {:local, :pies_pool},
+      worker_module: Pies,
+      size: 50,
+      max_overflow: 50,
+      timeout: :inifinity
+    ]
+
     # Define workers and child supervisors to be supervised
     children = [
       # Start the endpoint when the application starts
       supervisor(BakeOff.Endpoint, []),
 
       # Start and supervise the Pies GenServer
-      worker(BakeOff.Pies, [])
+      # worker(BakeOff.Pies, [])
+
+      :poolboy.child_spec(:pies_pool, poolboy_opts, [])
 
       # Start your own worker by calling: BakeOff.Worker.start_link(arg1, arg2, arg3)
       # worker(BakeOff.Worker, [arg1, arg2, arg3]),
@@ -29,6 +41,7 @@ defmodule BakeOff do
     opts = [strategy: :one_for_one, name: BakeOff.Supervisor]
     Supervisor.start_link(children, opts)
   end
+
 
   # Tell Phoenix to update the endpoint configuration
   # whenever the application is updated.

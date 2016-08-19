@@ -18,8 +18,7 @@ defmodule BakeOff.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {BakeOff, []},
-     applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext, :redix,
-                    :httpoison]]
+     applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext, :redix, :poolboy, :httpoison]]
   end
 
   # Specifies which paths to compile per environment.
@@ -36,8 +35,9 @@ defmodule BakeOff.Mixfile do
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
      {:redix, ">= 0.0.0"},
+     {:poison, "~> 2.0"},
      {:httpoison, "~> 0.9.0"},
-     {:poison, "~> 2.0"}]
+     {:poolboy, ">= 1.5.1"}]
   end
 
   defp aliases do
