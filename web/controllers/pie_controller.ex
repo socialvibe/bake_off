@@ -43,7 +43,6 @@ defmodule BakeOff.PieController do
 
     pies_worker = :poolboy.checkout(:pies_pool)
     candidates =  GenServer.call(pies_worker, :get_all)
-    # candidates =  BakeOff.Pies.get_all
       |> Stream.filter(fn(pie) -> Pie.has_labels?(pie, labels) end)
       |> Stream.reject(fn(pie) -> Pie.unavailable?(pie, username) end)
 

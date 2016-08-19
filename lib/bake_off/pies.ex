@@ -23,22 +23,10 @@ defmodule BakeOff.Pies do
 
   # GenServer callbacks
   def init(_) do
-  #  { :ok, %{ body: pie_json } } = HTTPoison.get(@s3)
-  #  pies = Poison.Parser.parse!(pie_json)
-  #    |> Map.get("pies")
-  pies = [%{"id" => 1,
-   "image_url" => "http://stash.truex.com/tech/bakeoff/apple_pie.jpg",
-   "labels" => ["vegetarian", "vegan", "sweet"], "name" => "Apple Pie",
-   "price_per_slice" => 1.5, "slices" => 10},
- %{"id" => 2,
-   "image_url" => "http://stash.truex.com/tech/bakeoff/pecan_pie.jpg",
-   "labels" => ["vegetarian", "vegan", "sweet"], "name" => "Pecan Pie",
-   "price_per_slice" => 2.25, "slices" => 14},
- %{"id" => 3,
-   "image_url" => "http://stash.truex.com/tech/bakeoff/shepherds_pie.jpg",
-   "labels" => ["gluten_free", "savory"], "name" => "Shepherd's Pie",
-   "price_per_slice" => 8.95, "slices" => 8}]
+    { :ok, %{ body: pie_json } } = HTTPoison.get(@s3)
 
+    pies = Poison.Parser.parse!(pie_json)
+      |> Map.get("pies")
     sorted = pies
       |> Enum.sort(&(&1["price_per_slice"] < &2["price_per_slice"]))
     indexed = pies
