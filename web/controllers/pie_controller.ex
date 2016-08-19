@@ -41,8 +41,8 @@ defmodule BakeOff.PieController do
     username = params["username"]
     budget = params["budget"] || "cheap"
 
-    pies_worker = :poolboy.checkout(BakeOff.pool_name)
-    candidates =  pies_worker.get_all
+    pies_worker = :poolboy.checkout(:pies_pool)
+    candidates =  GenServer.call(pies_worker, :get_all)
     # candidates =  BakeOff.Pies.get_all
       |> Stream.filter(fn(pie) -> Pie.has_labels?(pie, labels) end)
       |> Stream.reject(fn(pie) -> Pie.unavailable?(pie, username) end)
@@ -52,7 +52,7 @@ defmodule BakeOff.PieController do
       "premium" -> Enum.at(candidates, -1)
     end
 
-   # :poolboy.checkin(BakeOff.pool_name, pies_worker)
+   :poolboy.checkin(:pies_pool, pies_worker)
 
     if chosen == nil do
       render_404_json(conn)
